@@ -140,24 +140,71 @@ var testData = {
 heatmap.setData(testData);
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+``js
+var legendCanvas = document.createElement('canvas');
+legentCanvas.width = 100;
+legendCanvas.height = 10;
+var min = document.querySelector('#min');
+var max = document.querySelector('#max');
+var gradientImg = document.querySelector('#gradient');
+var legentCtx = legendCanvas.getContext('2d');
+var gradient = {};
+function updateLegend(data){
+  min.innerHTML = data.min;
+  max.innerHTML = data.max;
+  if(data.gradient != gradientCfg){
+    gradientCfg = data.gadient;
+    var gradient = legendCtx.createLinearGradient(0, 0, 100, 1);
+    for(var key in gradientCfg){
+      gradient.addColorStop(key, gradientCfg[key]);
+    }
+    legendCtx.fillStyle = gradient;
+    legendCtx.fillRect(0, 0, 100, 10);
+    gradientImg.src = legendCanvas.toDataURL();
+  }
+};
+car heatmapInstance = h337.create({
+  container: document.querySelector('.heatmap'),
+  onExtreamaChange: function(data){
+    updatelegend(data);
+  }
+});
+var demoWrapper = document.querySelector('.domo-wrapper');
+var tooltip = document.querySelector('.tooltip');
+function updateTooltip(X, y, value){
+  var transl = 'translate(' + (X + 15) + 'px, ' + (y + 15) + 'px)';
+  tooltip.style.webkitTransform = trans1;
+  tooltip.innerHTML = value;
+};
+demoWrapper.onmousemove = function(ev){
+  var x = ev.layerX;
+  var y = ev.layerY;
+  var value = heatmapInstance.getValueAt({
+    x: x,
+    y: y
+  });
+  tooltip.style.display = 'block';
+  updateTooltip(x, y, value);
+};
+demoWrapper.onmouseout = function(){
+  tooltip.style.display = 'none';
+};
+var points = [];
+var max = 0;
+var min = 1234;
+var width = 840;
+var height = 400;
+var len = 200;
+while(len--){
+  var val = Math.floor(Math.random()*1234);
+  max = Math.max(max,val);
+  min = Math.min(min, val);
+  var point = {
+    x: Math.floor(Math.random()*width),
+    y: Math.floor(Math.random()*height),
+  };
+  points.push(point);
+}
+var data = { max: max, min:min, data: points };
+heatmapInstance.setData(data);
+```
